@@ -1,0 +1,50 @@
+{
+  "type": "occultism:ritual",
+  "ritual_type": "occultism:craft_with_spirit_name",
+  "activation_item": {
+    "item": "occultism:book_of_binding_bound_afrit"
+  },
+  "pentacle_id": "occultism:craft_afrit",
+  "duration": 300,
+  "ritual_dummy": {
+    "item": "occultism_rs:ritual_dummy/craft_ritual_satchel_t2"
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:hopper"
+    },
+    {
+      "item": "minecraft:dispenser"
+    },
+    {
+      "tag": "minecraft:wool"
+    },
+    {
+      "tag": "forge:leather"
+    },
+    {
+      "tag": "forge:string"
+    },
+    {
+      "tag": "forge:ingots/silver"
+    },
+    {
+      "item": "occultism:afrit_essence"
+    },
+    {
+      "tag": "forge:ender_pearls"
+    },
+    {
+      "tag": "forge:ender_pearls"
+    },
+    {
+      "tag": "forge:ender_pearls"
+    },
+    {
+      "tag": "forge:ender_pearls"
+    }
+  ],
+  "result": {
+    "item": "occultism_rs:ritual_satchel_t2"
+  }
+}

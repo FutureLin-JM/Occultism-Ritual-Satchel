@@ -1,0 +1,13 @@
+{
+  "values": [
+    "#minecraft:candles",
+    "occultism:golden_sacrificial_bowl",
+    "occultism:spirit_attuned_crystal",
+    "minecraft:skeleton_skull",
+    "minecraft:wither_skeleton_skull",
+    {
+      "id": "#occultism:chalk_glyphs",
+      "required": false
+    }
+  ]
+}

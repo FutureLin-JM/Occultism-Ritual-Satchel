@@ -1,0 +1,16 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "com.futurelin.occultism_rs.mixin",
+    "compatibilityLevel": "JAVA_17",
+    "refmap": "occultism_rs.refmap.json",
+    "mixins": [
+        "ChalkItemMixin",
+        "GoldenSacrificialBowlBlockEntityMixin"
+    ],
+    "client": [
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}
