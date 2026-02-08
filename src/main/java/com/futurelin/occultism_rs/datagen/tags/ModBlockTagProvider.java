@@ -24,6 +24,7 @@ public class ModBlockTagProvider extends BlockTagsProvider {
                 .addTag(BlockTags.CANDLES)
                 .add(OccultismBlocks.GOLDEN_SACRIFICIAL_BOWL.get())
                 .add(OccultismBlocks.SPIRIT_ATTUNED_CRYSTAL.get())
+                .add(OccultismBlocks.SACRIFICIAL_BOWL.get())
                 .add(Blocks.SKELETON_SKULL)
                 .add(Blocks.WITHER_SKELETON_SKULL)
                 .addOptionalTag(ModTags.Blocks.CHALK_GLYPHS)

@@ -16,5 +16,5 @@ from [Occultism](https://www.curseforge.com/minecraft/mc-mods/occultism) 1.21.1 
 ## For Modpack Authors
 
 If you are using this mod in your modpack and have added new rituals that involve new blocks, please ensure you add
-these new blocks to the `occultism_rs:pentacle_materialsblock` tag. This is necessary for the satchel to function
+these new blocks to the `occultism_rs:pentacle_materials` block tag. This is necessary for the satchel to function
 correctly.
