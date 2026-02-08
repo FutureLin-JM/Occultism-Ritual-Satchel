@@ -1,5 +1,7 @@
 {
   "values": [
+    "minecraft:flint_and_steel",
+    "occultism:datura",
     {
       "id": "#occultism:tools/chalk",
       "required": false

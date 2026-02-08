@@ -6,6 +6,7 @@ import com.klikli_dev.occultism.registry.OccultismItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
@@ -22,6 +23,8 @@ public class ModItemTagProvider extends ItemTagsProvider {
     protected void addTags(HolderLookup.Provider provider) {
         copy(ModTags.Blocks.PENTACLE_MATERIALS, ModTags.Items.PENTACLE_MATERIALS);
         tag(ModTags.Items.PENTACLE_MATERIALS)
+                .add(Items.FLINT_AND_STEEL)
+                .add((OccultismItems.DATURA.get()))
                 .addOptionalTag(ModTags.Items.TOOLS_CHALK)
                 .replace(false);
 

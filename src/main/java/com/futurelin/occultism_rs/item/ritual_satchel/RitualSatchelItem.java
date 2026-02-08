@@ -8,10 +8,13 @@ import com.futurelin.occultism_rs.network.Networking;
 import com.futurelin.occultism_rs.preview.ModonomiconPreviewCompat;
 import com.futurelin.occultism_rs.registry.ModItems;
 import com.klikli_dev.modonomicon.api.multiblock.Multiblock;
+import com.klikli_dev.modonomicon.api.multiblock.TriPredicate;
 import com.klikli_dev.modonomicon.multiblock.matcher.AnyMatcher;
 import com.klikli_dev.modonomicon.multiblock.matcher.DisplayOnlyMatcher;
 import com.klikli_dev.occultism.common.container.storage.SatchelInventory;
 import com.klikli_dev.occultism.common.item.tool.ChalkItem;
+import com.klikli_dev.occultism.registry.OccultismBlocks;
+import com.klikli_dev.occultism.registry.OccultismItems;
 import com.klikli_dev.occultism.util.ItemNBTUtil;
 import com.klikli_dev.occultism.util.TextUtil;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMaps;
@@ -24,13 +27,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.NetworkHooks;
@@ -85,6 +87,13 @@ public abstract class RitualSatchelItem extends Item {
             return PlacementResult.ERROR_BLOCK_AT_POSITION_NOT_AIR;
         }
 
+        var firePlacementResult = this.tryPlaceFireBlock(context, inventory, targetMatcher.getWorldPosition(), statePredicate);
+        if (firePlacementResult == PlacementResult.SUCCESS) {
+            return PlacementResult.SUCCESS;
+        } else if (firePlacementResult == PlacementResult.ERROR_WILL_BREAK_ITEM) {
+            return PlacementResult.ERROR_WILL_BREAK_ITEM;
+        }
+
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack stack = inventory.getItem(i);
             var isGlyph = false;
@@ -127,9 +136,79 @@ public abstract class RitualSatchelItem extends Item {
                 inventory.setItem(i, stack);
                 inventory.writeItemStack();
                 return PlacementResult.SUCCESS;
+
             }
         }
         return PlacementResult.ERROR_NO_MATCHING_BLOCK_FOUND;
+    }
+
+    @Nullable
+    protected PlacementResult tryPlaceFireBlock(UseOnContext context, SatchelInventory inventory, BlockPos targetPos, TriPredicate<BlockGetter, BlockPos, BlockState> statePredicate) {
+        Level level = context.getLevel();
+
+        BlockState spiritFire = OccultismBlocks.SPIRIT_FIRE.get().defaultBlockState();
+        BlockState fire = Blocks.FIRE.defaultBlockState();
+        BlockState soulFire = Blocks.SOUL_FIRE.defaultBlockState();
+
+        boolean needsSpiritFire = statePredicate.test(level, targetPos, spiritFire);
+        boolean needsFire = statePredicate.test(level, targetPos, fire);
+        boolean needsSoulFire = statePredicate.test(level, targetPos, soulFire);
+
+        if (!needsSpiritFire && !needsFire && !needsSoulFire) {
+            return null;
+        }
+
+        int flintAndSteelSlot = -1;
+        int daturaSlot = -1;
+
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
+            if (stack.isEmpty()) continue;
+
+            if (stack.getItem() == Items.FLINT_AND_STEEL && flintAndSteelSlot == -1) {
+                flintAndSteelSlot = i;
+            }
+            if (stack.getItem() == OccultismItems.DATURA.get() && daturaSlot == -1) {
+                daturaSlot = i;
+            }
+        }
+
+        if (flintAndSteelSlot == -1) {
+            return null;
+        }
+
+        ItemStack flintAndSteel = inventory.getItem(flintAndSteelSlot);
+
+        if (context.getItemInHand().is(ModItems.RITUAL_SATCHEL_T1.get()) && flintAndSteel.getMaxDamage() - flintAndSteel.getDamageValue() <= 1) {
+            return PlacementResult.ERROR_WILL_BREAK_ITEM;
+        }
+
+        // 灵火
+        if (needsSpiritFire && daturaSlot != -1) {
+            ItemStack datura = inventory.getItem(daturaSlot);
+
+            level.setBlock(targetPos.above(), spiritFire, 11);
+
+            // 消耗物品
+            flintAndSteel.hurtAndBreak(1, context.getPlayer(), p -> {
+            });
+            datura.shrink(1);
+
+            inventory.setItem(flintAndSteelSlot, flintAndSteel);
+            inventory.setItem(daturaSlot, datura);
+            inventory.writeItemStack();
+
+            return PlacementResult.SUCCESS;
+        }
+
+        if (needsFire || needsSoulFire) {
+            flintAndSteel.useOn(new UseOnContext(context.getLevel(), context.getPlayer(), context.getHand(), flintAndSteel, context.getHitResult()));
+            inventory.setItem(flintAndSteelSlot, flintAndSteel);
+            inventory.writeItemStack();
+            return PlacementResult.SUCCESS;
+
+        }
+        return null;
     }
 
     protected InteractionResult useOnClientSide(UseOnContext context) {
