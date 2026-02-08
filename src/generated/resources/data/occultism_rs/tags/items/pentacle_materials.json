@@ -1,5 +1,9 @@
 {
   "values": [
+    {
+      "id": "#occultism:tools/chalk",
+      "required": false
+    },
     "#minecraft:candles",
     "occultism:golden_sacrificial_bowl",
     "occultism:spirit_attuned_crystal",

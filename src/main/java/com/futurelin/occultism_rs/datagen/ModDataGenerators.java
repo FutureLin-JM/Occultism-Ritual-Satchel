@@ -4,9 +4,11 @@ import com.futurelin.occultism_rs.OccultismRS;
 import com.futurelin.occultism_rs.datagen.lang.ModENUSProvider;
 import com.futurelin.occultism_rs.datagen.lang.ModZHCNProvider;
 import com.futurelin.occultism_rs.datagen.tags.ModBlockTagProvider;
+import com.futurelin.occultism_rs.datagen.tags.ModItemTagProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
+import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -23,7 +25,8 @@ public class ModDataGenerators {
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
-        generator.addProvider(event.includeServer(), new ModBlockTagProvider(packOutput, lookupProvider, existingFileHelper));
+        BlockTagsProvider blockTagsProvider = generator.addProvider(event.includeServer(), new ModBlockTagProvider(packOutput, lookupProvider, existingFileHelper));
+        generator.addProvider(event.includeServer(), new ModItemTagProvider(packOutput, lookupProvider, blockTagsProvider.contentsGetter(), existingFileHelper));
 
         generator.addProvider(event.includeClient(), new ModENUSProvider(packOutput));
         generator.addProvider(event.includeClient(), new ModZHCNProvider(packOutput));

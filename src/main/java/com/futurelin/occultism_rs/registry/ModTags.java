@@ -16,6 +16,7 @@ public class ModTags {
     }
 
     public static class Items {
+        public static final TagKey<Item> PENTACLE_MATERIALS = makeItemTag(new ResourceLocation(OccultismRS.MOD_ID, "pentacle_materials"));
         public static final TagKey<Item> TOOLS_CHALK = makeItemTag(new ResourceLocation(Occultism.MODID, "tools/chalk"));
     }
 
